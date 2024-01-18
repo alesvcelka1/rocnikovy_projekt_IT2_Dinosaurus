@@ -1,91 +1,99 @@
-// Importování funkcí manipulace vlastními vlastnostmi z externího modulu
+// Importuj potřebné funkce pro manipulaci s vlastnostmi prvku
 import {
   incrementCustomProperty,
   setCustomProperty,
   getCustomProperty,
 } from "./updateCustomProperty.js"
 
-// Herní prvek reprezentující dinosaura
+// Element reprezentující dinosaura na obrazovce
 const dinoElem = document.querySelector("[data-dino]")
 
-// Konstanty ovlivňující pohyb a skoky dinosaura
+// Konstanty pro rychlost skoku, gravitaci a animaci běhu dinosaura
 const JUMP_SPEED = 0.45
 const GRAVITY = 0.0015
 const DINO_FRAME_COUNT = 2
 const FRAME_TIME = 100
 
-// Proměnné sledující stav dinosaura
+// Globální proměnné sledující stav skoku dinosaura
 let isJumping
 let dinoFrame
 let currentFrameTime
 let yVelocity
 
-// Funkce pro inicializaci dinosaura na začátku hry
+// Inicializační funkce pro nastavení dinosaura na začátku
 export function setupDino() {
+  // Nastav počáteční hodnoty proměnných
   isJumping = false
   dinoFrame = 0
   currentFrameTime = 0
   yVelocity = 0
+  // Nastav počáteční pozici dinosaura
   setCustomProperty(dinoElem, "--bottom", 0)
+  // Zruš starý posluchač klávesnice a přidej nový pro reakci na skok
   document.removeEventListener("keydown", onJump)
   document.addEventListener("keydown", onJump)
 }
 
-// Funkce pro aktualizaci stavu dinosaura v každém snímku
+// Funkce pro aktualizaci stavu dinosaura
 export function updateDino(delta, speedScale) {
+  // Zpracuj běh dinosaura
   handleRun(delta, speedScale)
+  // Zpracuj skok dinosaura
   handleJump(delta)
 }
 
-// Funkce pro získání obdélníkových informací o dinosaurovi
+// Funkce pro získání obdélníku reprezentujícího dinosaura (pro detekci kolizí)
 export function getDinoRect() {
   return dinoElem.getBoundingClientRect()
 }
 
-// Funkce pro nastavení stavu dinosaura na prohru
+// Funkce pro nastavení stavu pro prohru dinosaura
 export function setDinoLose() {
   dinoElem.src = "imgs/dino-lose.png"
 }
 
-// Funkce pro zpracování pohybu dinosaura (běh)
+// Funkce pro zpracování animace běhu dinosaura
 function handleRun(delta, speedScale) {
+  // Pokud dinosaurus skáče, zobraz obrázek v klidu
   if (isJumping) {
-    // Dinosaurus stojí na místě při skoku
     dinoElem.src = `imgs/dino-stationary.png`
     return
   }
 
-  // Přepínání snímků dinosaura během běhu
+  // Pokud uplynul dostatečný čas od poslední změny snímku, přepni na další snímek běhu
   if (currentFrameTime >= FRAME_TIME) {
     dinoFrame = (dinoFrame + 1) % DINO_FRAME_COUNT
     dinoElem.src = `imgs/dino-run-${dinoFrame}.png`
     currentFrameTime -= FRAME_TIME
   }
+  // Aktualizuj čas pro další změnu snímku
   currentFrameTime += delta * speedScale
 }
 
 // Funkce pro zpracování skoku dinosaura
 function handleJump(delta) {
+  // Pokud dinosaurus neskáče, není co dělat
   if (!isJumping) return
 
-  // Aktualizace vlastnosti --bottom během skoku
+  // Inkrementuj vlastnost "--bottom" podle rychlosti skoku
   incrementCustomProperty(dinoElem, "--bottom", yVelocity * delta)
 
-  // Kontrola dosažení země při skoku
+  // Pokud dinosaurus dosáhl nebo překročil zem, zastav skok
   if (getCustomProperty(dinoElem, "--bottom") <= 0) {
     setCustomProperty(dinoElem, "--bottom", 0)
     isJumping = false
   }
 
-  // Aplikace gravitace na rychlost dinosaura během skoku
+  // Sníž rychlost skoku vlivem gravitace
   yVelocity -= GRAVITY * delta
 }
 
-// Obsluha události stisku klávesy pro skok
+// Funkce reagující na stisknutí klávesy pro skok
 function onJump(e) {
+  // Pokud není stisknuta mezerník nebo dinosaurus už skáče, ignoruj událost
   if (e.code !== "Space" || isJumping) return
 
-  // Nastavení počáteční rychlosti skoku a indikace skoku
+  // Nastav rychlost skoku a označ, že dinosaurus skáče
   yVelocity = JUMP_SPEED
   isJumping = true
 }

@@ -1,31 +1,32 @@
-// Importování funkcí pro manipulaci se zemí, dinosaurem a kaktusy z externích modulů
+// Importuj potřebné funkce pro aktualizaci pozadí, dinosaura a kaktusů
 import { updateGround, setupGround } from "./ground.js"
 import { updateDino, setupDino, getDinoRect, setDinoLose } from "./dino.js"
 import { updateCactus, setupCactus, getCactusRects } from "./cactus.js"
 
-// Konstanty určující rozměry herního světa a nárůst rychlosti hry
-const SIRKA_SVETA = 100
-const VYSKA_SVETA = 30
-const NARUST_RYCHLOSTI = 0.00001
+// Konstanty pro šířku a výšku světa, a zvýšení rychlosti pohybu
+const WORLD_WIDTH = 100
+const WORLD_HEIGHT = 30
+const SPEED_SCALE_INCREASE = 0.00001
 
-// Elementy herního prostoru a skóre
+// Element světa, skóre a úvodní obrazovky
 const worldElem = document.querySelector("[data-world]")
 const scoreElem = document.querySelector("[data-score]")
 const startScreenElem = document.querySelector("[data-start-screen]")
 
-// Nastavení škály mezi pixely a herním světem
+// Nastav poměr pixelů k světu při načtení stránky a při změně velikosti okna
 setPixelToWorldScale()
 window.addEventListener("resize", setPixelToWorldScale)
+// Přidej posluchač klávesnice pro spuštění hry, ale pouze jednou
 document.addEventListener("keydown", handleStart, { once: true })
 
-// Proměnné sledující čas od poslední aktualizace, rychlost hry a skóre
+// Proměnné pro sledování času, rychlosti a skóre
 let lastTime
 let speedScale
 let score
 
-// Hlavní funkce pro aktualizaci stavu hry v každém snímku
+// Hlavní aktualizační funkce
 function update(time) {
-  // Inicializace lastTime při prvním spuštění hry
+  // Pokud je lastTime null, nastav ho a požádej o další snímek animace
   if (lastTime == null) {
     lastTime = time
     window.requestAnimationFrame(update)
@@ -35,17 +36,17 @@ function update(time) {
   // Výpočet rozdílu času od poslední aktualizace
   const delta = time - lastTime
 
-  // Aktualizace stavu země, dinosaura, kaktusů, rychlosti a skóre
+  // Aktualizace pozemní plochy, dinosaura, kaktusů, rychlosti a skóre
   updateGround(delta, speedScale)
   updateDino(delta, speedScale)
   updateCactus(delta, speedScale)
   updateSpeedScale(delta)
   updateScore(delta)
 
-  // Kontrola prohry
+  // Kontrola pro prohru
   if (checkLose()) return handleLose()
 
-  // Aktualizace času poslední aktualizace a vyvolání další aktualizace
+  // Nastav lastTime na aktuální čas a požádej o další snímek animace
   lastTime = time
   window.requestAnimationFrame(update)
 }
@@ -56,7 +57,7 @@ function checkLose() {
   return getCactusRects().some(rect => isCollision(rect, dinoRect))
 }
 
-// Funkce pro zjištění, zda dochází ke kolizi mezi dvěma obdélníky
+// Funkce pro detekci kolize dvou obdélníků
 function isCollision(rect1, rect2) {
   return (
     rect1.left < rect2.right &&
@@ -66,20 +67,20 @@ function isCollision(rect1, rect2) {
   )
 }
 
-// Funkce pro aktualizaci rychlosti hry na základě času
+// Funkce pro zvýšení rychlosti pohybu
 function updateSpeedScale(delta) {
-  speedScale += delta * NARUST_RYCHLOSTI
+  speedScale += delta * SPEED_SCALE_INCREASE
 }
 
-// Funkce pro aktualizaci skóre na základě času
+// Funkce pro aktualizaci skóre
 function updateScore(delta) {
   score += delta * 0.01
   scoreElem.textContent = Math.floor(score)
 }
 
-// Funkce pro obsluhu stisku klávesy pro začátek hry
+// Funkce pro obsluhu stisku klávesy na začátku hry
 function handleStart() {
-  // Resetování proměnných a nastavení herních prvků
+  // Resetuj hodnoty, nastav svět, dinosaura a kaktusy
   lastTime = null
   speedScale = 1
   score = 0
@@ -87,30 +88,35 @@ function handleStart() {
   setupDino()
   setupCactus()
 
-  // Skrytí úvodní obrazovky a spuštění hlavní aktualizační smyčky
+  // Skryj úvodní obrazovku
   startScreenElem.classList.add("hide")
+
+  // Požádej o první snímek animace
   window.requestAnimationFrame(update)
 }
 
 // Funkce pro obsluhu prohry
 function handleLose() {
-  // Nastavení obrázku dinosaura pro prohru a zobrazení úvodní obrazovky po chvíli
+  // Nastav obrázek pro prohru
   setDinoLose()
+
+  // Počkej krátkou dobu a přidej posluchač pro restart hry
   setTimeout(() => {
     document.addEventListener("keydown", handleStart, { once: true })
     startScreenElem.classList.remove("hide")
   }, 100)
 }
 
-// Funkce pro nastavení škály mezi pixely a herním světem
+// Funkce pro nastavení poměru pixelů k světu
 function setPixelToWorldScale() {
   let worldToPixelScale
-  if (window.innerWidth / window.innerHeight < SIRKA_SVETA / VYSKA_SVETA) {
-    worldToPixelScale = window.innerWidth / SIRKA_SVETA
+  if (window.innerWidth / window.innerHeight < WORLD_WIDTH / WORLD_HEIGHT) {
+    worldToPixelScale = window.innerWidth / WORLD_WIDTH
   } else {
-    worldToPixelScale = window.innerHeight / VYSKA_SVETA
+    worldToPixelScale = window.innerHeight / WORLD_HEIGHT
   }
 
   worldElem.style.width = `${WORLD_WIDTH * worldToPixelScale}px`
   worldElem.style.height = `${WORLD_HEIGHT * worldToPixelScale}px`
 }
+

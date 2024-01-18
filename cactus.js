@@ -1,63 +1,79 @@
-// Importování funkcí manipulace vlastními vlastnostmi z externího modulu
+// Importuj potřebné funkce pro manipulaci s vlastnostmi prvku
 import {
   setCustomProperty,
   incrementCustomProperty,
   getCustomProperty,
 } from "./updateCustomProperty.js"
 
-// Konstanty definující vlastnosti kaktusů a herního světa
-const RYCHLOST = 0.05
-const INTERVAL_MIN_KAKTUS = 500
-const INTERVAL_MAX_KAKTUS = 2000
-const svetElem = document.querySelector("[data-world]")
+// Konstanty pro nastavení rychlosti a intervalu mezi kaktusy
+const SPEED = 0.05
+const CACTUS_INTERVAL_MIN = 500
+const CACTUS_INTERVAL_MAX = 2000
 
-// Proměnná pro uchování času do vytvoření dalšího kaktusu
-let casDoDalsihoKaktusu
+// Element světa, kde se kaktusy zobrazují
+const worldElem = document.querySelector("[data-world]")
 
-// Funkce pro nastavení herního prvku kaktusu
-export function nastavitKaktusy() {
-  // Inicializace času do dalšího kaktusu
-  casDoDalsihoKaktusu = INTERVAL_MIN_KAKTUS
-  document.querySelectorAll("[data-cactus]").forEach(kaktus => {
-    kaktus.remove()
+// Globální proměnná pro sledování času do vytvoření dalšího kaktusu
+let nextCactusTime
+
+// Inicializační funkce pro nastavení kaktusů na začátku
+export function setupCactus() {
+  // Nastav počáteční hodnotu pro vytvoření prvního kaktusu
+  nextCactusTime = CACTUS_INTERVAL_MIN
+  // Odstraň všechny existující kaktusy
+  document.querySelectorAll("[data-cactus]").forEach(cactus => {
+    cactus.remove()
   })
 }
 
-// Funkce pro aktualizaci kaktusů na základě času a rychlosti
-export function aktualizovatKaktusy(delta, mierkaRychlosti) {
-  document.querySelectorAll("[data-cactus]").forEach(kaktus => {
-    incrementCustomProperty(kaktus, "--left", delta * mierkaRychlosti * RYCHLOST * -1)
-    if (getCustomProperty(kaktus, "--left") <= -100) {
-      kaktus.remove()
+// Funkce pro aktualizaci polohy kaktusů
+export function updateCactus(delta, speedScale) {
+  // Pro každý kaktus na obrazovce
+  document.querySelectorAll("[data-cactus]").forEach(cactus => {
+    // Inkrementuj vlastnost "--left" podle aktuální rychlosti
+    incrementCustomProperty(cactus, "--left", delta * speedScale * SPEED * -1)
+    // Pokud je kaktus mimo obrazovku, odstraň ho
+    if (getCustomProperty(cactus, "--left") <= -100) {
+      cactus.remove()
     }
   })
 
-  if (casDoDalsihoKaktusu <= 0) {
-    vytvoritKaktus()
-    casDoDalsihoKaktusu =
-      nahodneCisloMezi(INTERVAL_MIN_KAKTUS, INTERVAL_MAX_KAKTUS) / mierkaRychlosti
+  // Pokud je čas vytvořit další kaktus
+  if (nextCactusTime <= 0) {
+    // Vytvoř nový kaktus
+    createCactus()
+    // Nastav čas do vytvoření dalšího kaktusu s náhodným intervalem
+    nextCactusTime = randomNumberBetween(CACTUS_INTERVAL_MIN, CACTUS_INTERVAL_MAX) / speedScale
   }
-  casDoDalsihoKaktusu -= delta
+  // Sníž čas do vytvoření dalšího kaktusu o uplynulý čas
+  nextCactusTime -= delta
 }
 
-// Funkce pro získání obdélníkových informací o kaktusech
-export function ziskatObdelnikyKaktusu() {
-  return [...document.querySelectorAll("[data-cactus]")].map(kaktus => {
-    return kaktus.getBoundingClientRect()
+// Funkce pro získání obdélníků kaktusů (pro detekci kolizí)
+export function getCactusRects() {
+  // Získání obdélníků všech kaktusů na obrazovce
+  return [...document.querySelectorAll("[data-cactus]")].map(cactus => {
+    return cactus.getBoundingClientRect()
   })
 }
 
-// Funkce pro vytvoření kaktusu
-function vytvoritKaktus() {
-  const kaktus = document.createElement("img")
-  kaktus.dataset.cactus = true
-  kaktus.src = "imgs/kaktus.png"
-  kaktus.classList.add("kaktus")
-  setCustomProperty(kaktus, "--left", 100)
-  svetElem.append(kaktus)
+// Funkce pro vytvoření nového kaktusu
+function createCactus() {
+  const cactus = document.createElement("img")
+  // Nastav dataset pro identifikaci kaktusu
+  cactus.dataset.cactus = true
+  // Nastav obrázek pro kaktus
+  cactus.src = "imgs/cactus.png"
+  // Přidej CSS třídu pro stylování
+  cactus.classList.add("cactus")
+  // Nastav počáteční levou pozici
+  setCustomProperty(cactus, "--left", 100)
+  // Přidej kaktus do světa
+  worldElem.append(cactus)
 }
 
-// Funkce pro generování náhodného čísla v zadaném rozmezí
-function nahodneCisloMezi(min, max) {
+// Funkce pro generování náhodného čísla v daném rozmezí
+function randomNumberBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
+

@@ -1,34 +1,37 @@
-// Importování funkcí manipulace vlastními vlastnostmi z externího modulu
+// Importuj potřebné funkce pro manipulaci s vlastnostmi prvku
 import {
   getCustomProperty,
   incrementCustomProperty,
   setCustomProperty,
 } from "./updateCustomProperty.js"
 
-// Konstanta určující rychlost pohybu pozadí (země)
-const RYCHLOST = 0.05
+// Konstanta pro rychlost pohybu pozadí
+const SPEED = 0.05
 
-// Seznam prvků reprezentujících země v herním prostoru
+// Seznam prvků reprezentujících zem (pozemní plochy)
 const groundElems = document.querySelectorAll("[data-ground]")
 
-// Funkce pro nastavení počáteční polohy zemí
+// Inicializační funkce pro nastavení pozadí na začátku
 export function setupGround() {
-  // Nastavení počátečních hodnot vlastnosti --left pro jednotlivé země
+  // Nastav počáteční levou pozici první pozemní plochy
   setCustomProperty(groundElems[0], "--left", 0)
+  // Nastav počáteční levou pozici druhé pozemní plochy
   setCustomProperty(groundElems[1], "--left", 300)
 }
 
-// Funkce pro aktualizaci pohybu zemí v každém snímku
+// Funkce pro aktualizaci pohybu pozadí
 export function updateGround(delta, speedScale) {
-  // Iterace přes všechny prvky reprezentující země
+  // Pro každý prvek reprezentující pozemní plochu
   groundElems.forEach(ground => {
-    // Inkrementace hodnoty vlastnosti --left pro pohyb země
-    incrementCustomProperty(ground, "--left", delta * speedScale * RYCHLOST * -1)
+    // Inkrementuj vlastnost "--left" podle aktuální rychlosti pohybu
+    incrementCustomProperty(ground, "--left", delta * speedScale * SPEED * -1)
 
-    // Kontrola přesunu země mimo obrazovku, a případné vrácení země na začátek
+    // Pokud prvek přesáhl levou hranici obrazovky
     if (getCustomProperty(ground, "--left") <= -300) {
+      // Přesuň prvek zpět za pravou hranici obrazovky
       incrementCustomProperty(ground, "--left", 600)
     }
   })
 }
+
 

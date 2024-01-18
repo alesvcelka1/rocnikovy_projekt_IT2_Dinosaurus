@@ -1,68 +1,69 @@
-/* Univerzální styly pro všechny elementy a jejich pseudo-elementy */
+/* Nastavení box modelu na všechny elementy, zakázání výběru textu */
 *, *::before, *::after {
-  box-sizing: border-box; /* Zajišťuje, že šířky a výšky elementů budou zahrnovat ohraničení a padding, nikoli margin */
-  user-select: none; /* Zakazuje výběr obsahu myší */
+  box-sizing: border-box;
+  user-select: none;
 }
 
-/* Styly pro celou stránku */
+/* Nulování okraje těla, centrování obsahu a výšky na minimální obrazovku */
 body {
-  margin: 0; /* Odstranění defaultního okraje odstraní nepříjemné mezery okolo stránky */
-  display: flex; /* Nastavení flexboxu pro centrování obsahu */
+  margin: 0;
+  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Minimální výška těla stránky bude rovna celé výšce okna prohlížeče */
+  min-height: 100vh;
 }
 
-/* Styly pro herní svět */
+/* Styly pro celý herní svět */
 .world {
-  overflow: hidden; /* Skrývá obsah mimo rozměry herního světa */
-  position: relative; /* Nastavuje relativní pozici pro vnitřní prvky */
+  overflow: hidden;
+  position: relative;
 }
 
-/* Styly pro skóre */
+/* Styly pro zobrazení skóre v herním světě */
 .score {
-  position: absolute; /* Absolutní pozice umožňuje umístit skóre na přesné místo v herním světě */
-  font-size: 3vmin; /* Relativní velikost písma na základě šířky zobrazeného textu (viewport width) */
-  right: 1vmin; /* Odsazení zprava o 1% zobrazené šířky okna prohlížeče */
-  top: 1vmin; /* Odsazení shora o 1% zobrazené výšky okna prohlížeče */
+  position: absolute;
+  font-size: 3vmin;
+  right: 1vmin;
+  top: 1vmin;
 }
 
 /* Styly pro úvodní obrazovku */
 .start-screen {
-  position: absolute; /* Absolutní pozice pro umístění na přesné místo v herním světě */
-  font-size: 5vmin; /* Relativní velikost písma pro úvodní obrazovku */
-  top: 50%; /* Umístění na střed výšky herního světa */
-  left: 50%; /* Umístění na střed šířky herního světa */
-  transform: translate(-50%, -50%); /* Posunutí na střed úvodní obrazovky */
+  position: absolute;
+  font-size: 5vmin;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* Třída pro skrytí elementu */
+/* Styly pro skrytí elementu */
 .hide {
-  display: none; /* Skryje element */
+  display: none;
 }
 
-/* Styly pro zemi */
+/* Styly pro pozemní plochy v herním světě */
 .ground {
-  --left: 0; /* Definice vlastní proměnné pro pohyb země */
-  position: absolute; /* Absolutní pozice pro přesné umístění */
-  width: 300%; /* Šířka země je třikrát větší než herní svět */
-  bottom: 0; /* Přilepení k dolnímu okraji herního světa */
-  left: calc(var(--left) * 1%); /* Dynamický výpočet pozice země na základě hodnoty proměnné */
+  --left: 0;
+  position: absolute;
+  width: 300%;
+  bottom: 0;
+  left: calc(var(--left) * 1%);
 }
 
-/* Styly pro dinosaura */
+/* Styly pro dinosaura v herním světě */
 .dino {
-  --bottom: 0; /* Definice vlastní proměnné pro vertikální polohu dinosaura */
-  position: absolute; /* Absolutní pozice pro přesné umístění */
-  left: 1%; /* Horizontální pozice dinosaura na levém okraji herního světa */
-  height: 30%; /* Výška dinosaura jako relativní velikost herního světa */
-  bottom: calc(var(--bottom) * 1%); /* Dynamický výpočet vertikální pozice dinosaura na základě hodnoty proměnné */
+  --bottom: 0;
+  position: absolute;
+  left: 1%;
+  height: 30%;
+  bottom: calc(var(--bottom) * 1%);
 }
 
-/* Styly pro kaktus */
+/* Styly pro kaktus v herním světě */
 .cactus {
-  position: absolute; /* Absolutní pozice pro přesné umístění */
-  left: calc(var(--left) * 1%); /* Dynamický výpočet horizontální pozice kaktusu na základě hodnoty proměnné */
-  height: 30%; /* Výška kaktusu jako relativní velikost herního světa */
-  bottom: 0; /* Přilepení kaktusu k dolnímu okraji herního světa */
+  position: absolute;
+  left: calc(var(--left) * 1%);
+  height: 30%;
+  bottom: 0;
 }
+
