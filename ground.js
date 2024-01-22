@@ -1,9 +1,5 @@
 // Importuj potřebné funkce pro manipulaci s vlastnostmi prvku
-import {
-  getCustomProperty,
-  incrementCustomProperty,
-  setCustomProperty,
-} from "./updateCustomProperty.js"
+import { getCustomProperty, incrementCustomProperty, setCustomProperty } from "./updateCustomProperty.js"
 
 // Konstanta pro rychlost pohybu pozadí
 const SPEED = 0.05
@@ -33,5 +29,6 @@ export function updateGround(delta, speedScale) {
     }
   })
 }
+
 
 

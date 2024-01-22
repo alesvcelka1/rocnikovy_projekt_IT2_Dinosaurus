@@ -7,7 +7,7 @@ import {
 
 // Konstanty pro nastavení rychlosti a intervalu mezi kaktusy
 const SPEED = 0.05
-const CACTUS_INTERVAL_MIN = 500
+const CACTUS_INTERVAL_MIN = 650
 const CACTUS_INTERVAL_MAX = 2000
 
 // Element světa, kde se kaktusy zobrazují
@@ -76,4 +76,5 @@ function createCactus() {
 function randomNumberBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
 
